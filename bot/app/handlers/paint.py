@@ -38,9 +38,8 @@ async def chose_style(message: types.Message, state: FSMContext):
 
 async def get_image(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    print(data)
-    await message.answer(
-        "Стиль этого художника будет применён:", data.get("chosen_painter")
+    await message.reply(
+        "Стиль этого художника будет применён:" + data["chosen_painter"]
     )
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
@@ -59,6 +58,6 @@ def register_handlers_paint(dp: Dispatcher):
     dp.register_message_handler(chose_style, state=PaintParams.painter_selection)
     dp.register_message_handler(
         get_image,
-        content_types=["photo"],
+        content_types=types.ContentType.PHOTO,
         state=PaintParams.image,
     )

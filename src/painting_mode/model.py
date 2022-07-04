@@ -1,7 +1,7 @@
 from datetime import datetime
 from torch import load, no_grad
 
-from painting_mode.utils import *
+from utils import *
 
 
 class GNST:
@@ -18,7 +18,10 @@ class GNST:
         self.content = prep(content_path)
 
         # Load network in evaluation mode
-        self.model = load("painting_mode/cyclegan_van_gogh.pth", map_location="cpu")
+        self.model = load(
+            "/home/qamaz/Documents/python_projects/tgbots/aiogan/src/painting_mode/cyclegan_van_gogh.pth",
+            map_location="cpu",
+        )
 
     def _start_clock(self):
         return datetime.now()
