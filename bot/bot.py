@@ -8,47 +8,52 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from app.config_reader import load_config
 from app.handlers.common import register_handlers_common
 from app.handlers.paint import register_handlers_paint
+from app.handlers.style import register_handlers_style
+
 
 logger = logging.getLogger(__name__)
-# Регистрация команд, отображаемых в интерфейсе Telegram
+# register telegram interface commands
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command="/cancel", description="Отменить текущее действие"),
-        BotCommand(command="/info", description="Информация о боте и технологиях"),
+        BotCommand(command="/start", description="View the list of available options"),
         BotCommand(
-            command="/paint", description="Преобразование картинки в стиле художника"
+            command="/reset", description=" Reset, if you've uploaded the wrong images"
         ),
         BotCommand(
-            command="/transfer", description="Перенести стиль одной картинки на другую"
+            command="/paint", description="Upload your image to turn it into a painting"
         ),
+        BotCommand(
+            command="/style",
+            description="Select a style to transfer onto your image",
+        ),
+        BotCommand(command="/about", description="If u r a curious one"),
     ]
     await bot.set_my_commands(commands)
 
 
 async def main():
-    # Настройка логирования в stdout
+    # logging to stdout
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     )
     logger.error("Starting bot")
 
-    # Парсинг файла конфигурации
-    config = load_config("bot/app/config/bot.ini")
-
-    # Объявление и инициализация объектов бота и диспетчера
+    # parcing the config file
+    logger.error("Loading config")
+    config = load_config("./app/config/bot.ini")
+    # initialization of the bot and dispatcher
     bot = Bot(token=config.tg_bot.token)
     dp = Dispatcher(bot, storage=MemoryStorage())
 
-    # Регистрация хэндлеров
+    # handlers registration
     register_handlers_common(dp)
     register_handlers_paint(dp)
-    # Установка команд бота
+    register_handlers_style(dp)
+    # set bot's commands
     await set_commands(bot)
 
-    # пропуск накопившихся апдейтов (необязательно)
     await dp.skip_updates()
-    # Запуск поллинга
     await dp.start_polling()
 
 
