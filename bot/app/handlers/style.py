@@ -129,7 +129,7 @@ async def run_fnst(message: Message, state: FSMContext, content_path, style_path
     bytes.name = "stylized_image.jpg"
     stylized_image.save(bytes, "JPEG")
     bytes.seek(0)
-    config = load_config("./app/config/bot.ini")
+    config = load_config("bot/app/config/bot.ini")
     bot_fnst = Bot(token=config.tg_bot.token)
     await bot_fnst.send_photo(
         message.chat.id,

@@ -78,7 +78,7 @@ async def run_cyclegan(message: Message, state: FSMContext, content_path):
     bytes.name = "painted_image.jpg"
     painted_image.save(bytes, "JPEG")
     bytes.seek(0)
-    config = load_config("./app/config/bot.ini")
+    config = load_config("bot/app/config/bot.ini")
     bot_gnst = Bot(token=config.tg_bot.token)
     await bot_gnst.send_photo(
         message.chat.id,

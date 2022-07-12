@@ -5,10 +5,10 @@ from torchvision import transforms
 
 # Pre-processing
 def prep(image_path, size=350):
-    image = Image.open(image_path).convert('RGB')
-    image2tensor = transforms.Compose([transforms.Resize(size),
-                                       transforms.CenterCrop(size),
-                                       transforms.ToTensor()])
+    image = Image.open(image_path).convert("RGB")
+    image2tensor = transforms.Compose(
+        [transforms.Resize(size), transforms.CenterCrop(size), transforms.ToTensor()]
+    )
     return image2tensor(image).unsqueeze(0)
 
 

@@ -1,5 +1,14 @@
 from torch import FloatTensor, bmm
-from torch.nn import Module, Parameter, Sequential, Upsample, ReflectionPad2d, Conv2d, InstanceNorm2d, ReLU
+from torch.nn import (
+    Module,
+    Parameter,
+    Sequential,
+    Upsample,
+    ReflectionPad2d,
+    Conv2d,
+    InstanceNorm2d,
+    ReLU,
+)
 
 
 class CoMatchLayer(Module):
@@ -18,7 +27,10 @@ class CoMatchLayer(Module):
 
     def forward(self, x):
         self.P = bmm(self.weight.expand_as(self.GM_t), self.GM_t)
-        return bmm(self.P.transpose(1, 2).expand(x.size(0), self.C, self.C), x.view(x.size(0), x.size(1), -1)).view_as(x)
+        return bmm(
+            self.P.transpose(1, 2).expand(x.size(0), self.C, self.C),
+            x.view(x.size(0), x.size(1), -1),
+        ).view_as(x)
 
 
 class ConvBlock(Module):
@@ -41,18 +53,41 @@ class ResBlock(Module):
 
     expansion = 4
 
-    def __init__(self, in_channels, channels, stride=1, downsample=False, upsample=False):
+    def __init__(
+        self, in_channels, channels, stride=1, downsample=False, upsample=False
+    ):
         super().__init__()
 
-        self.down_conv = Conv2d(in_channels, channels * self.expansion, kernel_size=1, stride=stride) if downsample else None
-        self.up_conv = ConvBlock(in_channels, channels * self.expansion, kernel_size=1, stride=1, upsample=upsample) if upsample else None
+        self.down_conv = (
+            Conv2d(in_channels, channels * self.expansion, kernel_size=1, stride=stride)
+            if downsample
+            else None
+        )
+        self.up_conv = (
+            ConvBlock(
+                in_channels,
+                channels * self.expansion,
+                kernel_size=1,
+                stride=1,
+                upsample=upsample,
+            )
+            if upsample
+            else None
+        )
 
-        self.conv_block = Sequential(InstanceNorm2d(in_channels), ReLU(),
-                                     Conv2d(in_channels, channels, kernel_size=1, stride=1),
-                                     InstanceNorm2d(channels), ReLU(),
-                                     ConvBlock(channels, channels, kernel_size=3, stride=stride, upsample=upsample),
-                                     InstanceNorm2d(channels), ReLU(),
-                                     Conv2d(channels, channels * self.expansion, kernel_size=1, stride=1))
+        self.conv_block = Sequential(
+            InstanceNorm2d(in_channels),
+            ReLU(),
+            Conv2d(in_channels, channels, kernel_size=1, stride=1),
+            InstanceNorm2d(channels),
+            ReLU(),
+            ConvBlock(
+                channels, channels, kernel_size=3, stride=stride, upsample=upsample
+            ),
+            InstanceNorm2d(channels),
+            ReLU(),
+            Conv2d(channels, channels * self.expansion, kernel_size=1, stride=1),
+        )
 
     def forward(self, x):
         residual = x
@@ -68,22 +103,31 @@ class MSGNet(Module):
         super().__init__()
 
         # Siamese Network
-        self.siamese_network = Sequential(ConvBlock(in_channels, 64, kernel_size=7, stride=1),
-                                          InstanceNorm2d(64), ReLU(),
-                                          ResBlock(64, 32, stride=2, downsample=True),
-                                          ResBlock(32 * ResBlock.expansion, channels, stride=2, downsample=True))
+        self.siamese_network = Sequential(
+            ConvBlock(in_channels, 64, kernel_size=7, stride=1),
+            InstanceNorm2d(64),
+            ReLU(),
+            ResBlock(64, 32, stride=2, downsample=True),
+            ResBlock(32 * ResBlock.expansion, channels, stride=2, downsample=True),
+        )
 
         # CoMatch Layer
         self.comatch_layer = CoMatchLayer(channels * ResBlock.expansion)
 
         # Transformation Network
-        self.transformation_network = Sequential(self.siamese_network,
-                                                 self.comatch_layer,
-                                                 *[ResBlock(channels * ResBlock.expansion, channels) for _ in range(num_res_blocks)],
-                                                 ResBlock(channels * ResBlock.expansion, 32, stride=1, upsample=True),
-                                                 ResBlock(32 * ResBlock.expansion, 16, stride=1, upsample=True),
-                                                 InstanceNorm2d(16 * ResBlock.expansion), ReLU(),
-                                                 ConvBlock(16 * ResBlock.expansion, out_channels, kernel_size=7, stride=1))
+        self.transformation_network = Sequential(
+            self.siamese_network,
+            self.comatch_layer,
+            *[
+                ResBlock(channels * ResBlock.expansion, channels)
+                for _ in range(num_res_blocks)
+            ],
+            ResBlock(channels * ResBlock.expansion, 32, stride=1, upsample=True),
+            ResBlock(32 * ResBlock.expansion, 16, stride=1, upsample=True),
+            InstanceNorm2d(16 * ResBlock.expansion),
+            ReLU(),
+            ConvBlock(16 * ResBlock.expansion, out_channels, kernel_size=7, stride=1)
+        )
 
     def gram_matrix(self, inputs):
         BS, C, H, W = inputs.size()

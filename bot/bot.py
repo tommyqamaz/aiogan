@@ -20,7 +20,8 @@ async def set_commands(bot: Bot):
             command="/reset", description="Reset, if you've uploaded the wrong images"
         ),
         BotCommand(
-            command="/paint", description="Transfer style of your photo to given painter domain"
+            command="/paint",
+            description="Transfer style of your photo to given painter domain",
         ),
         BotCommand(
             command="/style",
@@ -41,7 +42,7 @@ async def main():
 
     # parcing the config file
     logger.error("Loading config")
-    config = load_config("./app/config/bot.ini")
+    config = load_config("bot/app/config/bot.ini")
     # initialization of the bot and dispatcher
     bot = Bot(token=config.tg_bot.token)
     dp = Dispatcher(bot, storage=MemoryStorage())
