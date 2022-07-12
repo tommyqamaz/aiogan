@@ -15,16 +15,16 @@ logger = logging.getLogger(__name__)
 # register telegram interface commands
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command="/start", description="View the list of available options"),
+        BotCommand(command="/start", description="List of available options"),
         BotCommand(
-            command="/reset", description=" Reset, if you've uploaded the wrong images"
+            command="/reset", description="Reset, if you've uploaded the wrong images"
         ),
         BotCommand(
-            command="/paint", description="Upload your image to turn it into a painting"
+            command="/paint", description="Transfer style of your photo to given painter domain"
         ),
         BotCommand(
             command="/style",
-            description="Select a style to transfer onto your image",
+            description="Neural style transfer between two pictures",
         ),
         BotCommand(command="/about", description="If u r a curious one"),
     ]
