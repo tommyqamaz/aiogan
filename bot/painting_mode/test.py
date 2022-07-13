@@ -1,7 +1,7 @@
 from datetime import datetime
 from torch import load, no_grad
 
-from painting_mode.utils import post, load
+from painting_mode.utils import post, prep
 import models
 
 
@@ -11,7 +11,7 @@ class GNST:
     Generative Neural Style Transfer with CycleGAN
     """
 
-    def __init__(self, content_path):
+    def __init__(self, content_path, painer_name):
         # Start the clock
         self.time_started = self._start_clock()
 
@@ -20,7 +20,9 @@ class GNST:
 
         # Load network in evaluation mode
         # self.model = load("bot/painting_mode/cyclegan_van_gogh.pth", map_location="cpu")
-        self.model = load("bot/painting_mode/style_cezanne.pth", map_location="cpu")
+        self.model = load(
+            f"bot/painting_mode/weights/{painer_name}.pth", map_location="cpu"
+        )
 
     def _start_clock(self):
         return datetime.now()

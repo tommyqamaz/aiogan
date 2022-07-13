@@ -147,7 +147,7 @@ async def run_fnst(message: Message, state: FSMContext, content_path, style_path
 
 
 def register_handlers_style(dp: Dispatcher):
-    dp.register_message_handler(cmd_style, state=None),
+    dp.register_message_handler(cmd_style, commands="style", state=None),
     dp.register_callback_query_handler(
         select_style, select_style_callback.filter(), state=FNSTStates.style_menu
     ),
