@@ -24,7 +24,7 @@ class FNST:
 
         # Load model pretrained on 21 styles
         self.model.load_state_dict(
-            load("stylization_mode/msgnet_21_styles.pth", map_location="cpu")
+            load("bot/stylization_mode/msgnet_21_styles.pth", map_location="cpu")
         )
 
         # Pre-compute style targets

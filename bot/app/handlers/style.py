@@ -16,6 +16,8 @@ from aiogram.types import Message, ChatActions, CallbackQuery, InputMediaPhoto
 
 from app.config_reader import load_config
 
+"""author: https://github.com/tensorush"""
+
 
 class FNSTStates(StatesGroup):
     """
@@ -31,13 +33,13 @@ async def cmd_style(message: Message, state: FSMContext):
     """
     Enables style mode
     """
-    await message.answer("You've chosen stylization 🌈")
+    await message.answer("You've chosen stylization")
 
     logging.info("Stylization — selecting style...")
 
     await FNSTStates.style_menu.set()
     async with state.proxy() as data:
-        data["style_path"] = "stylization_mode/style_images/oil_painting.jpg"
+        data["style_path"] = "bot/stylization_mode/style_images/oil_painting.jpg"
         await message.answer_photo(
             open(data["style_path"], "rb"),
             caption="1️⃣ Select one of 21 styles...",
@@ -52,11 +54,11 @@ async def select_style(call: CallbackQuery, callback_data: dict, state: FSMConte
     """
     name = callback_data.get("name")
     await call.message.edit_media(
-        InputMediaPhoto(open(f"stylization_mode/style_images/{name}.jpg", "rb")),
+        InputMediaPhoto(open(f"bot/stylization_mode/style_images/{name}.jpg", "rb")),
         reply_markup=style_menu[name],
     )
     async with state.proxy() as data:
-        data["style_path"] = f"stylization_mode/style_images/{name}.jpg"
+        data["style_path"] = f"bot/stylization_mode/style_images/{name}.jpg"
 
 
 async def ignore_style(call: CallbackQuery):
@@ -73,12 +75,12 @@ async def accept_style(call: CallbackQuery):
     Accepts the chosen style
     """
     await call.answer()
-    await call.message.answer("OMG! 🎇")
+    await call.message.answer("OMG")
 
     logging.info("Stylization — uploading content...")
 
     await FNSTStates.upload_content.set()
-    await call.message.answer("2️⃣ Upload a content image...")
+    await call.message.answer("Upload a content image...")
 
 
 async def upload_content(message: Message, state: FSMContext):
@@ -100,7 +102,7 @@ async def upload_content(message: Message, state: FSMContext):
     logging.info("Stylization — running FNST...")
 
     await FNSTStates.run_fnst.set()
-    await message.answer("3️⃣ Be patient — wait a second or maybe more... ⏳")
+    await message.answer("Be patient — wait a second or maybe more...")
     # Signal typing
     await ChatActions.typing()
     # Get style path
