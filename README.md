@@ -22,6 +22,6 @@ The second mode is style mode and it based on Neural-Style algorithm developed b
 #### Style mode
 
 <p align = 'center'>
-<img src = 'examples/ex3.jpeg' height = '500px'>
-<img src = 'examples/ex4.jpeg' height = '500px'>
+<img src = 'examples/ex3.jpeg' width = '250px'>
+<img src = 'examples/ex4.jpeg' width = '250px'>
 </p>
