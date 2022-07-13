@@ -16,7 +16,7 @@ from aiogram.types import Message, ChatActions, ReplyKeyboardMarkup, ReplyKeyboa
 from app.config_reader import load_config
 
 
-available_artists = ["van Gogh", "Cezanne", "Hulio Perdulio"]
+available_artists = ["van Gogh", "Monet", "Hulio Perdulio"]
 
 
 class GANstyle(StatesGroup):
